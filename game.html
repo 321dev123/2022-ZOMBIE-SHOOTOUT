@@ -1,0 +1,169 @@
+  <audio loop autoplay>
+  <source src="background.mp3" type="audio/mp3">
+  Your browser does not support the audio element.
+</audio>
+ <head>
+  <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> 
+  <script src="https://unpkg.com/aframe-supercraft-loader/dist/aframe-supercraft-loader.min.js"></script> 
+  <script src="https://unpkg.com/aframe-supercraft-thing/dist/aframe-supercraft-thing.min.js"></script> 
+  <script src="https://unpkg.com/aframe-super-shooter/dist/aframe-super-shooter.min.js"></script>
+  <script src="https://unpkg.com/aframe-proxy-event-component/dist/aframe-proxy-event-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-event-set-component/dist/aframe-event-set-component.min.js"></script>
+<script>
+  AFRAME.registerComponent('shoot', {
+      init: function () {
+                 PlaySound = function () {
+    var audio = new Audio('shoot.mp3');
+    audio.loop = false;
+}  
+        document.body.addEventListener('mousedown', () => { this.el.emit('shoot'); });
+      }
+    });
+</script>
+</head>
+ 
+<body>
+  <a-scene>
+  <a-entity id="rig"
+          movement-controls="fly: true; easingY: 2"
+          position="0 0 0">
+  <a-entity camera
+            position="0 1.6 0"
+            look-controls="pointerLockEnabled: true"></a-entity>
+  </a-entity>
+  
+  
+  <a-box color="green" width="10" depth="10" height="0.1"></a-box>
+    <a-entity id="shotgunBarrels">
+    <a-camera position="0.1 1.6 0" shooter shoot id="secondBarrel">
+    </a-camera>
+    <a-camera position="-0.1 1.6 0" shooter shoot id="thirdBarrel">
+    </a-camera>
+    <a-camera position="0 1.7 0" shooter shoot id="fourthBarrel">
+    </a-camera>
+    <a-camera position="0 1.6 0" shooter shoot id="fifthBarrel">
+    </a-camera>
+      </a-entity>
+    <a-camera position="0 1.5 0" shooter shoot>
+    <a-entity supercraft-thing="from: #scene; name: thing0; ignorePosition: true;" rotation="5 90 0" id="gunTL" position="0 -0.1 0"></a-entity>
+      <a-entity id="aimer">
+      <a-box scale="0.03 0.2 0.01" position="-0.2 -0.15 -2" color="black" rotation="0 0 -45"></a-box>
+      <a-box scale="0.03 0.2 0.01" position="0.2 -0.15 -2" color="black" rotation="0 0 45"></a-box>
+      <a-box scale="0.03 0.2 0.01" position="0 0.2 -2" color="black"></a-box>
+      </a-entity>
+    </a-camera>
+    <a-entity id="tutorialLevel" visible="true">
+    <a-entity id="scene" supercraft-loader="name: simple-grade;" visible="false"></a-entity> 
+    <a-entity bullet="speed: 20; damagePoints: 1;" supercraft-thing="from: #scene; name: thing7;"></a-entity>
+    <a-text position="-6. 2.8 -13.5" value="Click to shoot, WASD or arrow keys to move targets are optional to shoot." color="black" text="" scale="3 3 3"></a-text>
+      </a-entity>
+    <a-entity id="levelOne" visible="false">
+      <a-entity id="levelOneLoader" supercraft-loader="name: fanatical-deer" visible="false"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing0; ignorePosition: true;" scale="15 15 15" position="0 4.7 -15"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing1; ignorePosition: true;" scale="15 15 15" position="0 0.31 -5.3"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing1; ignorePosition: true;" scale="15 15 15" position="-7 0.31 -8.3" rotation="0 45 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing1; ignorePosition: true;" scale="15 15 15" position="7.7 0.31 -10" rotation="0 -45 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing2; ignorePosition: true;" scale="15 15 15" position="0.6 0.25 -2.2" rotation="0 0 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing2; ignorePosition: true;" scale="15 15 15" position="-0.4 0.1 -3.7" rotation="0 180 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing2; ignorePosition: true;" scale="15 15 15" position="-1.8 0.2 -2.6" rotation="0 90 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing3; ignorePosition: true;" scale="15 15 15" position="-0.9 0.2 -2.1" rotation="0 0 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing3; ignorePosition: true;" scale="15 15 15" position="1.8 0.2 -3.4" rotation="0 25 0"></a-entity>
+      <a-entity supercraft-thing="from: #levelOneLoader; name: thing10; ignorePosition: true;" scale="15 15 15" position="-7 2 -14.5" rotation="0 25 0"></a-entity>
+            
+      <a-text value="LEVEL ONE" color="black" position="-6 10.7 -12" scale="10 10 10"></a-text>
+      <a-text value="KILLS: 0" color="black" position="-14 4.7 -12" scale="10 10 10" id="killText"></a-text>
+      <a-text value="TIME: 40" color="black" position="5 4.7 -12" scale="10 10 10" id="timer"></a-text>
+    </a-entity>
+  </a-scene>
+</body>
+<script>
+let Zombie = document.getElementById('zombie');
+let killedEnemies = 0;
+let levelEnemiesKilled = 0;
+let seconds;
+let leftGun = document.getElementById('leftGun');
+let rightGun = document.getElementById('rightGun');
+const killText = document.getElementById('killText');
+const timer = document.getElementById('timer');
+let timeCounter;
+let levelOneInt;
+document.addEventListener('die', () => {
+  killedEnemies += 1;
+  levelEnemiesKilled += 1;
+})
+function randomNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+/*function spawnTree(levelAppend) {
+  let tree = document.createElement('a-entity');
+  document.getElementById(levelAppend).append(tree);
+  tree.setAttribute('supercraft-thing', 'from: #levelOneLoader; name: thing10; ignorePosition: true;');
+  tree.setAttribute('scale', '15 15 15');
+  tree.setAttribute('visible', 'true')
+  tree.setAttribute('position', `${randomNum(20, -20)} 3 ${randomNum(-10 -20)}`);
+  tree.setAttribute('target', 'healthPoints: 1');
+  tree.setAttribute('event-set__die', 'visible: false;');
+}*/
+function spawnZombie(levelAppend) {
+  let zombie = document.createElement('a-entity');
+  document.getElementById(levelAppend).append(zombie);
+  zombie.setAttribute('supercraft-thing', 'from: #scene; name: thing4; ignorePosition: true;');
+  zombie.setAttribute('rotation', '0 90 0');
+  zombie.setAttribute('scale', '0.6 0.6 0.6');
+  zombie.setAttribute('visible', 'true')
+  zombie.setAttribute('position', `${randomNum(15, -15)} 0.85 ${randomNum(-3, -12)}`);
+  zombie.setAttribute('target', 'healthPoints: 1');
+  zombie.setAttribute('event-set__die', 'visible: false;');
+  
+}
+function spawnTarget(levelAppend) {
+  let target = document.createElement('a-entity');
+  document.getElementById(levelAppend).appendChild(target)
+  target.setAttribute('supercraft-thing', 'from: #scene; name: thing5; ignorePosition: true;');
+  target.setAttribute('position', `${randomNum(15, -15)} ${randomNum(1, 2.5)} ${randomNum(-3, -12)}`);
+  target.setAttribute('visible', 'true');
+  target.setAttribute('target', 'healthPoints: 1');
+  target.setAttribute('event-set__hit', 'visible: false;');
+  target.setAttribute('rotation', `0 ${randomNum(70, 120)} ${randomNum(-15, 15)}`)
+  
+}
+function spawnTargets(number, level) {
+  for(let i=0; i<number; i++) {
+    spawnTarget(level);
+  }
+}
+function spawnZombies(number, level) {
+  for(let i=0; i<number; i++) {
+    spawnZombie(level);
+  }
+}
+
+spawnTargets(5, 'tutorialLevel');
+spawnZombies(0, 'tutorialLevel');
+spawnTargets(0, 'levelOne');
+spawnZombies(12, 'levelOne');
+
+
+function tutorialLevel() {
+  if(levelEnemiesKilled == 5) {
+    clearInterval(tutorialInt);
+    levelEnemiesKilled = 0;
+    killedEnemies = 0;
+    document.getElementById('levelOne').setAttribute('visible', 'true');
+    document.getElementById('tutorialLevel').remove();
+    timeCounter = 60;
+    levelOneInt = setInterval(levelOne, 1000);
+  }
+}
+let tutorialInt = setInterval(tutorialLevel, 10);
+function levelOne() {
+  timeCounter -= 1;
+  timer.setAttribute('value', `TIME: ${timeCounter}`);
+  killText.setAttribute('value', `KILLS: ${killedEnemies}`)
+  if(timeCounter <= 0) {
+    alert("You Lose!")
+    document.getElementById('levelOne').setAttribute('visible', 'true');
+    document.getElementById('levelOne').remove();
+  }
+}
+</script>
